@@ -18,7 +18,10 @@ namespace ADO_DataSet
         SqlConnection connection;
         SqlCommand cmd;
         DataTable tbl;
+        DataTable tblProduct;
+        DataTable tblSupplier;
         DataSet dsNorthwind;
+        SqlDataAdapter adap;
         public Form1()
         {
             InitializeComponent();
@@ -52,8 +55,103 @@ namespace ADO_DataSet
         {
             connection = new SqlConnection(sqlconstr);
             cmd = new SqlCommand();
+            cmd.Connection = connection;
             dsNorthwind = new DataSet();
             tbl = new DataTable();
+            adap = new SqlDataAdapter();
+            
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+            if (connection.State == ConnectionState.Closed)
+                connection.Open();
+
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "Select * from Products";
+
+            tblProduct = new DataTable("Products");
+                tblProduct.Load(cmd.ExecuteReader());
+
+           if(dsNorthwind.Tables["Products"]==null)
+            dsNorthwind.Tables.Add(tblProduct);
+            dataGridView1.DataSource = dsNorthwind.Tables["Products"];
+
+            connection.Close();
+
+            //try
+            //{
+
+            //    cmd.CommandType = CommandType.Text;
+            //    cmd.CommandText = "Select * from Products";
+
+            //    connection.Open();
+            //    tbl.Load(cmd.ExecuteReader());
+            //    dataGridView1.DataSource = tbl;
+            //}
+            //catch (SqlException ex)
+            //{
+
+            //    MessageBox.Show(ex.Message);
+            //}
+            //finally
+            //{
+            //    connection.Close();
+            //}
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (connection.State == ConnectionState.Closed)
+                connection.Open();
+
+            tblSupplier = new DataTable();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "Select * from Suppliers";
+            DataTable table = new DataTable("Suppliers");
+            table.Load(cmd.ExecuteReader());
+
+            if (dsNorthwind.Tables["Suppliers"] == null)
+                dsNorthwind.Tables.Add(table);
+
+            //tblSupplier = new();
+            //tblSupplier.Load(cmd.ExecuteReader());
+            //dataGridView1.DataSource = tblSupplier;
+          
+
+                dataGridView1.DataSource = dsNorthwind.Tables["Suppliers"];
+
+          
+            connection.Close();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (connection.State == ConnectionState.Closed)
+                connection.Open();
+
+            adap.SelectCommand = new SqlCommand("Select * from Orders", connection);
+            adap.Fill(dsNorthwind, "Orders");
+
+            dataGridView1.DataSource = dsNorthwind.Tables["Orders"];
+            connection.Close();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (connection.State == ConnectionState.Closed)
+                connection.Open();
+
+            
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandText = "SalesByCategory";
+            cmd.Parameters.AddWithValue("@CategoryName", "Produce");
+            DataTable table = new DataTable("Suppliers");
+            table.Load(cmd.ExecuteReader());
+
+            dataGridView1.DataSource = table;
+            connection.Close();
         }
     }
 }
