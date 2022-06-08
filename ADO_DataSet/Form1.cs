@@ -153,5 +153,73 @@ namespace ADO_DataSet
             dataGridView1.DataSource = table;
             connection.Close();
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (connection.State == ConnectionState.Closed)
+                connection.Open();
+            // Asagidaki kod CommandText ile calisir
+            // insert into shippers (CompanyName,Phone) Values('Yurtici','4440232')
+            //cmd.CommandType = CommandType.Text;
+            //string insertsql = "insert into shippers (CompanyName,Phone) Values('"+ txtCompany.Text + "','"+txtPhone.Text+"')";
+
+            //cmd.CommandText = insertsql;
+            //insert ,update ve delete işlemlerinde executeNonQuery metodu kullanilacak. 
+
+            /*
+             Burasi ise Stored Procedure ile calisir.
+             
+             */
+
+
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandText = "AddShipper";
+            cmd.Parameters.AddWithValue("@CompanyName", txtCompany.Text);
+            cmd.Parameters.AddWithValue("@Phone", txtPhone.Text);
+
+            int sonuc = cmd.ExecuteNonQuery();
+            if (sonuc > 0)
+                MessageBox.Show("Kayit Başarili");
+            else
+                MessageBox.Show("Hata Oluştu");
+
+            /*
+             Entity Framwork olsaydi ne guzel olurdu
+             
+             */
+
+            //Shipper shipper = new Shipper();
+            //shipper.CompanyName = txtCompany.Text;
+            //shipper.Phone = txtPhone.Text;
+            //shipper.save()
+        
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtCompany_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (connection.State == ConnectionState.Closed)
+                connection.Open();
+
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "Select * from Customers";
+            //DataTable icerisinde eger kayit var ise bosalt.
+            tbl.Rows.Clear();
+            tbl.Load(cmd.ExecuteReader());
+
+            foreach (DataRow item in tbl.Rows)
+            {
+                listBox1.Items.Add(item["CompanyName"] + " => " + item["ContactName"]);
+            }
+        }
     }
 }
