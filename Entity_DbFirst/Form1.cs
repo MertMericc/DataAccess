@@ -83,5 +83,14 @@ namespace Entity_DbFirst
             db.SaveChanges();
             dataGridView1.DataSource = db.Shippers.ToList();
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Shippers sp = db.Shippers.Where(x => x.ShipperID==ShipperId).FirstOrDefault();
+
+            db.Shippers.Remove(sp);
+            db.SaveChanges();
+            dataGridView1.DataSource = db.Shippers.ToList();
+        }
     }
 }
